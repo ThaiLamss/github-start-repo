@@ -78,6 +78,7 @@ public:
     void setLineStatus(ProductionLine::LineStatus newStatus);
     void setWipStatus(WipLine::LineStatus newStatus);
     void setAGVStatus(AGV::AGVStatus newStatus);
+    QVariantMap getProductionLineData();
 
 signals:
     void lineIdChanged();

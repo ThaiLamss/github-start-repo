@@ -56,3 +56,34 @@ void Line::setAGVStatus(AGV::AGVStatus newStatus)
         emit agvChanged();
     }
 }
+
+QVariantMap Line::getProductionLineData()
+{
+    QVariantMap productionLineData;
+
+    // Lấy thông tin của ProductionLine
+    QString status;
+    QDateTime currentTime = QDateTime::currentDateTime();
+    int iElapsedSec = m_productionLine.timeUpdated.secsTo(currentTime);
+    QString elapsedTime = QDateTime::fromSecsSinceEpoch(iElapsedSec,Qt::TimeSpec::UTC).toString("hh:mm:ss");
+
+    // Chuyển đổi enum LineStatus thành QString
+    switch (m_productionLine.status) {
+    case ProductionLine::LineStatus::Full:
+        status = "Full";
+        break;
+    case ProductionLine::LineStatus::Call:
+        status = "Call";
+        break;
+    default:
+        status = "unknown";
+        break;
+    }
+
+    // Thêm dữ liệu vào QVariantMap
+    productionLineData.insert("status", status);
+    productionLineData.insert("timeUpdated", m_productionLine.timeUpdated.toString("hh:mm:ss"));
+    productionLineData.insert("elapsedTime", elapsedTime);
+
+    return productionLineData;
+}
