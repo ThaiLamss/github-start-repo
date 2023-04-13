@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QDateTime>
 #include <QVariantMap>
+#include <QJsonObject>
 
 class Line : public QObject
 {
@@ -20,16 +21,10 @@ public:
         LineStatus status;
         QDateTime timeUpdated;
 
-        bool updateStatus(LineStatus newStatus)
-        {
-            if (status != newStatus)
-            {
-                status = newStatus;
-                timeUpdated = QDateTime::currentDateTime();
-                return true;
-            }
-            return false;
-        }
+        bool updateStatus(LineStatus newStatus);
+        void writeJson(QJsonObject &json) const;
+        bool readJson(const QJsonObject &json);
+
     };
     struct WipLine
     {
@@ -37,16 +32,9 @@ public:
         LineStatus status;
         QDateTime timeUpdated;
 
-        bool updateStatus(LineStatus newStatus)
-        {
-            if (status != newStatus)
-            {
-                status = newStatus;
-                timeUpdated = QDateTime::currentDateTime();
-                return true;
-            }
-            return false;
-        }
+        bool updateStatus(LineStatus newStatus);
+        void writeJson(QJsonObject &json) const;
+        bool readJson(const QJsonObject &json);
     };
     struct AGV
     {
@@ -55,20 +43,16 @@ public:
         AGVStatus status;
         QDateTime timeUpdated;
 
-        bool updateStatus(AGVStatus newStatus)
-        {
-            if (status != newStatus)
-            {
-                status = newStatus;
-                timeUpdated = QDateTime::currentDateTime();
-                return true;
-            }
-            return false;
-        }
+        bool updateStatus(AGVStatus newStatus);
+        void writeJson(QJsonObject &json) const;
+        bool readJson(const QJsonObject &json);
     };
 
     Q_PROPERTY(int lineId READ lineId WRITE setLineId NOTIFY lineIdChanged)
     Q_PROPERTY(QString productionModel READ productionModel WRITE setProductionModel NOTIFY productionModelChanged)
+
+    void writeJson(QJsonObject &json) const;
+    void readJson(const QJsonObject &json);
 
     int lineId() const;
     void setLineId(int lineId);

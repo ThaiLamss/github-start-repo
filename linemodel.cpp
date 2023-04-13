@@ -6,6 +6,48 @@ LineModel::LineModel(QObject *parent) : QAbstractListModel(parent)
 
 }
 
+void LineModel::writeJson(QJsonObject &json) const
+{
+//    QList<Line*> m_lines; // Danh sách các đối tượng Line
+//    QStringList m_productionModels;
+    QJsonArray productionModelArray = QJsonArray::fromStringList(m_productionModels);
+    QJsonArray lineArray;
+    foreach(Line* line, m_lines)
+    {
+        QJsonObject lineObj;
+        line->writeJson(lineObj);
+        lineArray.append(lineObj);
+    }
+    json["productionModelArray"] = productionModelArray;
+    json["lineArray"] = lineArray;
+
+}
+
+void LineModel::readJson(const QJsonObject &json)
+{
+    if(json.contains("productionModelArray")&&json["productionModelArray"].isArray())
+    {
+        QJsonArray productionModelArray = json["productionModelArray"].toArray();
+        m_productionModels.clear();
+        foreach (QVariant model, productionModelArray.toVariantList())
+        {
+            m_productionModels.append(model.toString());
+        }
+    }
+    if(json.contains("lineArray")&&json["lineArray"].isArray())
+    {
+        QJsonArray lineArray = json["LineData"].toArray();
+        m_lines.clear();
+
+        for(int lineIndex=0; lineIndex < lineArray.size();++lineIndex)
+        {
+            QJsonObject lineObj = lineArray[lineIndex].toObject();
+            Line *line = new Line(this);
+            line->readJson(lineObj);
+        }
+    }
+}
+
 const QStringList &LineModel::productionModels() const
 {
     return m_productionModels;

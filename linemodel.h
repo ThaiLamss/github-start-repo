@@ -4,6 +4,8 @@
 #include <QAbstractListModel>
 #include <QList>
 #include "line.h"
+#include <QJsonArray>
+#include <QJsonDocument>
 
 class LineModel : public QAbstractListModel
 {
@@ -20,6 +22,9 @@ public:
         WipLineRole,
         AgvRole
     };
+
+    void writeJson(QJsonObject &json) const;
+    void readJson(const QJsonObject &json);
 
     const QStringList &productionModels() const;
     void setProductionModels(const QStringList &newProductionModels);

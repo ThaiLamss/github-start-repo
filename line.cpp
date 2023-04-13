@@ -6,6 +6,24 @@ Line::Line(QObject *parent) : QObject(parent)
 
 }
 
+void Line::writeJson(QJsonObject &json) const
+{
+    json["lineId"] = m_lineId;
+    json["productionModel"] = m_productionModel;
+    m_productionLine.writeJson(json);
+    m_wipLine.writeJson(json);
+    m_agv.writeJson(json);
+}
+
+void Line::readJson(const QJsonObject &json)
+{
+    m_lineId = json["lineId"].toInt();
+    m_productionModel = json["productionModel"].toString();
+    if(m_productionLine.readJson(json)) emit productionLineChanged();
+    if(m_wipLine.readJson(json)) emit wipLineChanged();
+    if(m_agv.readJson(json)) emit agvChanged();
+}
+
 int Line::lineId() const
 {
     return m_lineId;
@@ -153,4 +171,100 @@ QVariant Line::getAgvData()
     agvData.insert("elapsedTime", elapsedTime);
 
     return agvData;
+}
+
+bool Line::ProductionLine::updateStatus(LineStatus newStatus)
+{
+    if (status != newStatus)
+    {
+        status = newStatus;
+        timeUpdated = QDateTime::currentDateTime();
+        return true;
+    }
+    return false;
+}
+
+void Line::ProductionLine::writeJson(QJsonObject &json) const
+{
+    QJsonObject lineObj;
+    lineObj["status"] = status;
+    lineObj["timeUpdate"] = timeUpdated.toString("yy-MM-dd hh:mm:ss");
+    json["productionLine"] = lineObj;
+}
+
+bool Line::ProductionLine::readJson(const QJsonObject &json)
+{
+    if(json.contains("productionLine")&&json["productionLine"].isObject())
+    {
+        QJsonObject lineObj = json["productionLine"].toObject();
+        status = LineStatus(lineObj["status"].toInt());
+        timeUpdated = QDateTime::fromString(lineObj["timeUpdate"].toString(),"yy-MM-dd hh:mm:ss");
+        return true;
+    }
+    return false;
+}
+
+bool Line::WipLine::updateStatus(LineStatus newStatus)
+{
+    if (status != newStatus)
+    {
+        status = newStatus;
+        timeUpdated = QDateTime::currentDateTime();
+        return true;
+    }
+    return false;
+}
+
+void Line::WipLine::writeJson(QJsonObject &json) const
+{
+    QJsonObject wipObject;
+    wipObject["status"] = status;
+    wipObject["timeUpdate"] = timeUpdated.toString("yy-MM-dd hh:mm:ss");
+    json["wipLine"] = wipObject;
+}
+
+
+bool Line::WipLine::readJson(const QJsonObject &json)
+{
+    if(json.contains("wipLine")&&json["wipLine"].isObject())
+    {
+        QJsonObject wipObj = json["wipLine"].toObject();
+        status = LineStatus(wipObj["status"].toInt());
+        timeUpdated = QDateTime::fromString(wipObj["timeUpdate"].toString(),"yy-MM-dd hh:mm:ss");
+        return true;
+    }
+    return false;
+}
+
+bool Line::AGV::updateStatus(AGVStatus newStatus)
+{
+    if (status != newStatus)
+    {
+        status = newStatus;
+        timeUpdated = QDateTime::currentDateTime();
+        return true;
+    }
+    return false;
+}
+
+void Line::AGV::writeJson(QJsonObject &json) const
+{
+    QJsonObject agvObj;
+    agvObj["status"] = status;
+    agvObj["agvID"] = agvID;
+    agvObj["timeUpdate"] = timeUpdated.toString("yy-MM-dd hh:mm:ss");
+    json["agv"] = agvObj;
+}
+
+bool Line::AGV::readJson(const QJsonObject &json)
+{
+    if(json.contains("agv")&&json["agv"].isObject())
+    {
+        QJsonObject agvObj = json["agv"].toObject();
+        status = AGVStatus(agvObj["status"].toInt());
+        agvID = agvObj["agvID"].toInt();
+        timeUpdated = QDateTime::fromString(agvObj["timeUpdate"].toString(),"yy-MM-dd hh:mm:ss");
+        return true;
+    }
+    return false;
 }
