@@ -57,6 +57,14 @@ QVariant LineModel::data(const QModelIndex &index, int role) const
         return line->getProductionLineData();
 
     }
+    case WipLineRole:
+    {
+        return line->getWipLineData();
+    }
+    case AgvRole:
+    {
+        return line->getAgvData();
+    }
     default:
         return QVariant();
     }
