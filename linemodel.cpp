@@ -72,6 +72,19 @@ QVariant LineModel::data(const QModelIndex &index, int role) const
 
 bool LineModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
+    if (!index.isValid()) {
+            return false;
+        }
+
+    Line* line = m_lines.at(index.row());
+    switch (role) {
+    case LineIdRole:
+        line->setLineId(value.toInt());
+        emit dataChanged(index, index, { role });
+        return true;
+    default:
+        return false;
+    }
 
 }
 
