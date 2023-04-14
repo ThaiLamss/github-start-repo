@@ -6,7 +6,7 @@ Page {
     id: page
     width: 640
     height: 480
-    property real itemHeight: 80
+    property real itemHeight: 150
     property alias gridView: gridView
 
     header: Rectangle {
@@ -29,7 +29,7 @@ Page {
                     verticalAlignment: Text.AlignVCenter
                     id: txtHeader
                     color: "#ffffff"
-                    text: "Màn Hình Mornitor hệ thống thảm tĩnh điện Sub Line"
+                    text: "Màn Hình Mornitor hệ thống cung cấp vật liệu RB Line"
                     wrapMode: Text.WordWrap
                     font.pointSize: 30
                 }
@@ -56,16 +56,17 @@ Page {
         id: bodyRect
         color: "#d6e4ea"
         anchors.fill: parent
+
         GridView {
             id: gridView
             anchors.fill: parent
             property int minWidth:page.width// 400
-
             cellHeight:itemHeight
-            model: 5
+            model: 6
             delegate: LineDelegate{
                 width: gridView.cellWidth
             }
+
 
             cellWidth: Math.max(minWidth, page.width / Math.floor(page.width / minWidth))
 
@@ -101,7 +102,6 @@ Page {
                 height: footer.height
                 width: 150
                 text: "Add Line"
-                onClicked: popupInputLine.open()
 
             }
         }

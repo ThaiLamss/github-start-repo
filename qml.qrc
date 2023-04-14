@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>MainPage.qml</file>
         <file>LineDelegate.qml</file>
+        <file>CustomRadiusRect.qml</file>
     </qresource>
 </RCC>
